@@ -174,8 +174,9 @@ python3 recalbox_favorites.py -n ~/roms unmark
 ## Compatibilité Recalbox v10
 
 À partir de la version 10, Recalbox stocke ses métadonnées utilisateur (favoris,
-compteurs de jeu, date de dernière partie) dans un fichier séparé :
-`gamelist.recalbox.xml`, placé dans le même répertoire que `gamelist.xml`.
+compteurs de jeu, date de dernière partie) dans `gamelist-userdata.ini`, placé
+dans le même répertoire que `gamelist.xml`. Le fichier `gamelist.xml` n'est jamais
+modifié en mode v10.
 
 ### Comportement par défaut (v10)
 
@@ -201,26 +202,19 @@ python3 recalbox_favorites.py --v9 -n ~/roms mark favoris.txt
 python3 recalbox_favorites.py ~/roms unmark
 ```
 
-En mode v10 (défaut), `unmark` **supprime** les fichiers `gamelist.recalbox.xml` au lieu
-de mettre `<favorite>0</favorite>`. C'est l'opération inverse du bootstrap.
+En mode v10 (défaut), `unmark` retire la clé `favorite` de chaque entrée dans
+`gamelist-userdata.ini` (et supprime le fichier si c'était la seule entrée).
 
-### Format gamelist.recalbox.xml
+### Format gamelist-userdata.ini
 
-```xml
-<?xml version="1.0"?>
-<gameList>
-    <game>
-        <path>./Resident Evil 3 - Nemesis (France).chd</path>
-        <favorite>true</favorite>
-        <playcount>12</playcount>
-        <lastplayed>20260609T143000</lastplayed>
-    </game>
-</gameList>
+```
+galaga.zip:favorite=true
+rtype.zip:timeplayed=138,lastplayed=20260608T191434,playcount=1,favorite=true
+mame0274/xybots.zip:favorite=true
 ```
 
-Différences avec v9 : `true` au lieu de `1`, indentation 4 espaces,
-déclaration XML sans attribut `encoding`, contient uniquement les métadonnées
-utilisateur (pas les champs scraper).
+Le chemin ROM est le champ `<path>` du `gamelist.xml` sans le préfixe `./`.
+Les champs sont ordonnés : `timeplayed`, `lastplayed`, `playcount`, `favorite`.
 
 ---
 
@@ -239,10 +233,10 @@ python3 recalbox_favorites.py ~/roms apply sauvegarde.json
 ### Workflow standard (v10) : initialiser les favoris depuis une liste de ROMs
 
 ```bash
-# 1. Marquer les favoris (crée gamelist.recalbox.xml si nécessaire)
+# 1. Marquer les favoris
 python3 recalbox_favorites.py ~/roms mark --by-rom favoris-roms.txt
 
-# 2. Tout effacer (supprime les .recalbox.xml)
+# 2. Tout effacer
 python3 recalbox_favorites.py ~/roms unmark
 ```
 
@@ -275,8 +269,8 @@ python3 recalbox_favorites.py --threshold 90 ~/roms mark favoris.txt
 ```
 roms/
 ├── megadrive/
-│   ├── gamelist.xml              ← v9
-│   ├── gamelist.recalbox.xml     ← v10 (créé automatiquement ou présent nativement)
+│   ├── gamelist.xml              ← métadonnées scraper (jamais modifié en v10)
+│   ├── gamelist-userdata.ini     ← favoris/stats v10 (créé automatiquement)
 │   ├── sonic.md
 │   └── streets_of_rage_2.md
 ├── mame/

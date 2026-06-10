@@ -8,8 +8,8 @@ Contexte pour les agents IA (Claude, Copilot, etc.) travaillant sur ce projet.
 
 ## Objectif
 
-Gérer les favoris EmulationStation / Recalbox via les fichiers `gamelist.xml` ou
-`gamelist.recalbox.xml` répartis dans une arborescence de ROMs.
+Gérer les favoris EmulationStation / Recalbox via les fichiers `gamelist.xml` et
+`gamelist-userdata.ini` répartis dans une arborescence de ROMs.
 
 ## Modèle de données
 
@@ -24,17 +24,11 @@ Gérer les favoris EmulationStation / Recalbox via les fichiers `gamelist.xml` o
 </gameList>
 ```
 
-### gamelist.recalbox.xml (Recalbox v10)
-```xml
-<?xml version="1.0"?>
-<gameList>
-    <game>
-        <path>./rom.zip</path>
-        <favorite>true</favorite>
-        <playcount>12</playcount>
-        <lastplayed>20260609T143000</lastplayed>
-    </game>
-</gameList>
+### gamelist-userdata.ini (Recalbox v10)
+```
+galaga.zip:favorite=true
+rtype.zip:timeplayed=138,lastplayed=20260608T191434,playcount=1,favorite=true
+mame0274/xybots.zip:favorite=true
 ```
 
 ## Règles importantes
@@ -42,20 +36,17 @@ Gérer les favoris EmulationStation / Recalbox via les fichiers `gamelist.xml` o
 ### Ne jamais faire
 - Utiliser `xml_path.parent.name` pour le nom du système → vaut `"roms"` dans Recalbox.
   Toujours utiliser `xml_path.relative_to(source).parts[0]`.
-- Écrire `"1"` dans un `gamelist.recalbox.xml` → format v10 exige `"true"`.
-- Bootstrapper tous les systèmes en avance → créer `gamelist.recalbox.xml` uniquement
+- Modifier `gamelist.xml` en mode v10 → seul `gamelist-userdata.ini` est écrit.
+- Bootstrapper tous les systèmes en avance → créer `gamelist-userdata.ini` uniquement
   pour les systèmes où un favori est effectivement appliqué (`dirty`).
 
 ### Format v10
 
-| Aspect | v9 (`gamelist.xml`) | v10 (`gamelist.recalbox.xml`) |
+| Aspect | v9 (`gamelist.xml`) | v10 (`gamelist-userdata.ini`) |
 |---|---|---|
-| Valeur `<favorite>` mark | `"1"` | `"true"` |
-| Valeur `<favorite>` unmark | `"0"` | suppression du fichier |
-| Indentation | 2 espaces | 4 espaces |
-| Déclaration XML | `<?xml version='1.0' encoding='utf-8'?>` | `<?xml version='1.0'?>` |
-
-Détection dans le code : `xml_path.name == "gamelist.recalbox.xml"`
+| Valeur `<favorite>` mark | `"1"` dans `<favorite>` | `favorite=true` dans l'INI |
+| Valeur `<favorite>` unmark | `"0"` dans `<favorite>` | suppression de la clé/fichier |
+| Fichier modifié | `gamelist.xml` | `gamelist-userdata.ini` |
 
 ### Lecture du champ `<favorite>`
 
