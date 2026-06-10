@@ -37,8 +37,9 @@ Compatibilité Recalbox v10 :
     mame0274/xybots.zip:favorite=true
 
   Le chemin ROM est le champ <path> du gamelist.xml sans le préfixe './'.
-  En mode --v10, ce script lit et écrit uniquement gamelist-userdata.ini ;
+  Par défaut, ce script lit et écrit uniquement gamelist-userdata.ini ;
   gamelist.xml est utilisé en lecture seule pour identifier les jeux.
+  Utiliser --v9 pour gérer les favoris au format Recalbox v9 (gamelist.xml).
 """
 
 import argparse
@@ -826,7 +827,7 @@ def unmark_all_favorites(source: Path, dry_run: bool = False, force_v10: bool = 
         elif source.is_file() and source.name == "gamelist.xml":
             ini_files = [_userdata_path(source)]
         else:
-            logging.warning("unmark --v10 : aucune cible trouvée pour %s", source)
+            logging.warning("unmark v10 : aucune cible trouvée pour %s", source)
             ini_files = []
 
         total_removed = 0
@@ -1069,14 +1070,13 @@ def build_parser() -> argparse.ArgumentParser:
         help="Simule toutes les opérations sans écrire sur le disque.",
     )
     p.add_argument(
-        "--v10",
+        "--v9",
         action="store_true",
-        dest="v10",
+        dest="v9",
         default=False,
         help=(
-            "Mode Recalbox v10 : lit et écrit les favoris dans "
-            "gamelist-userdata.ini au lieu de gamelist.xml. "
-            "Le fichier gamelist.xml n'est jamais modifié."
+            "Mode Recalbox v9 (legacy) : lit et écrit les favoris dans "
+            "gamelist.xml au lieu de gamelist-userdata.ini."
         ),
     )
 
@@ -1118,33 +1118,46 @@ def main() -> None:
     threshold = args.threshold / 100.0
 
     setup_logging(args.log, args.verbose)
+    force_v10 = not args.v9
+
     logging.info(
         "=== recalbox_favorites démarré | commande=%s source=%s seuil=%.0f%%%s%s ===",
         args.command,
         args.source,
         args.threshold,
         " | DRY-RUN" if args.dry_run else "",
-        " | V10" if args.v10 else "",
+        " | V9" if args.v9 else "",
     )
     if args.dry_run:
         print("⚙  Mode DRY-RUN activé — aucun fichier ne sera modifié.\n")
-    if args.v10:
-        print("⚙  Mode V10 activé — gamelist-userdata.ini utilisé.\n")
+    if args.v9:
+        print("⚙  Mode V9 (legacy) activé — gamelist.xml utilisé.\n")
 
     if args.command == "export":
-        export_favorites(args.source, args.output, dry_run=args.dry_run, force_v10=args.v10)
+        export_favorites(args.source, args.output, dry_run=args.dry_run, force_v10=force_v10)
 
     elif args.command == "export-text":
-        export_favorites_text(args.source, args.output, dry_run=args.dry_run, force_v10=args.v10)
+        export_favorites_text(args.source, args.output, dry_run=args.dry_run, force_v10=force_v10)
 
     elif args.command == "apply":
-        apply_favorites(args.source, args.favorites_json, threshold, dry_run=args.dry_run, force_v10=args.v10)
+        apply_favorites(args.source, args.favorites_json, threshold, dry_run=args.dry_run, force_v10=force_v10)
 
     elif args.command == "mark":
-        mark_from_text(args.source, args.text_file, threshold, dry_run=args.dry_run, by_rom=args.by_rom, force_v10=args.v10)
+        mark_from_text(args.source, args.text_file, threshold, dry_run=args.dry_run, by_rom=args.by_rom, force_v10=force_v10)
 
     elif args.command == "unmark":
-        unmark_all_favorites(args.source, dry_run=args.dry_run, force_v10=args.v10)
+        if not args.dry_run:
+            try:
+                answer = input(
+                    "⚠  Cette opération va retirer TOUS les favoris sous "
+                    f"{args.source}.\n   Confirmer ? [o/N] "
+                )
+            except EOFError:
+                answer = ""
+            if answer.strip().lower() not in ("o", "oui", "y", "yes"):
+                print("Annulé.")
+                return
+        unmark_all_favorites(args.source, dry_run=args.dry_run, force_v10=force_v10)
 
     logging.info("=== terminé ===")
 

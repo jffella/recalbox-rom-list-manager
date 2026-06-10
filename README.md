@@ -30,7 +30,7 @@ python3 recalbox_favorites.py SOURCE [options] SOUS-COMMANDE [args]
 | `-n` / `--dry-run` | Simule toutes les opérations sans rien écrire sur le disque |
 | `-v` / `--verbose` | Affiche les messages DEBUG dans la console |
 | `--log FILE` | Fichier de log (défaut : `recalbox_favorites.log`) |
-| `--v10` | Force le format Recalbox v10 — voir section dédiée |
+| `--v9` | Force le format Recalbox v9 (legacy) — voir section dédiée |
 
 ---
 
@@ -177,35 +177,31 @@ python3 recalbox_favorites.py -n ~/roms unmark
 compteurs de jeu, date de dernière partie) dans un fichier séparé :
 `gamelist.recalbox.xml`, placé dans le même répertoire que `gamelist.xml`.
 
-### Détection automatique
+### Comportement par défaut (v10)
 
-Sans aucune option, le script détecte automatiquement la version :
-- `gamelist.recalbox.xml` présent → utilisé à la place de `gamelist.xml`
-- Absent → comportement v9 classique
+Par défaut, le script opère en **mode v10** : il lit et écrit les favoris dans
+`gamelist-userdata.ini` ; `gamelist.xml` n'est jamais modifié.
 
-### Option `--v10` — Forcer le format v10
-
-```bash
-python3 recalbox_favorites.py --v10 ~/roms mark favoris.txt
-```
-
-Force l'utilisation de `gamelist.recalbox.xml` pour toutes les opérations.
-Si le fichier n'existe pas encore pour un système, il est **créé automatiquement**
-par copie du `gamelist.xml` existant, uniquement pour les systèmes qui ont un favori
-à appliquer.
+### Option `--v9` — Format Recalbox v9 (legacy)
 
 ```bash
-# Vérifier ce qui serait créé sans toucher au disque
-python3 recalbox_favorites.py --v10 -n ~/roms mark favoris.txt
+python3 recalbox_favorites.py --v9 ~/roms mark favoris.txt
 ```
 
-### `unmark --v10` — Supprimer les fichiers v10
+Force l'utilisation de `gamelist.xml` pour toutes les opérations (ancien comportement).
 
 ```bash
-python3 recalbox_favorites.py --v10 ~/roms unmark
+# Simulation
+python3 recalbox_favorites.py --v9 -n ~/roms mark favoris.txt
 ```
 
-En mode v10, `unmark` **supprime** les fichiers `gamelist.recalbox.xml` au lieu
+### `unmark` en mode v10 — Supprimer les entrées favorites
+
+```bash
+python3 recalbox_favorites.py ~/roms unmark
+```
+
+En mode v10 (défaut), `unmark` **supprime** les fichiers `gamelist.recalbox.xml` au lieu
 de mettre `<favorite>0</favorite>`. C'est l'opération inverse du bootstrap.
 
 ### Format gamelist.recalbox.xml
@@ -230,7 +226,7 @@ utilisateur (pas les champs scraper).
 
 ## Exemples complets
 
-### Workflow v9 : sauvegarde et restauration des favoris
+### Workflow standard (v10) : sauvegarde et restauration des favoris
 
 ```bash
 # 1. Exporter les favoris actuels
@@ -240,29 +236,29 @@ python3 recalbox_favorites.py ~/roms export sauvegarde.json
 python3 recalbox_favorites.py ~/roms apply sauvegarde.json
 ```
 
-### Workflow v9 : créer une liste de favoris manuellement
+### Workflow standard (v10) : initialiser les favoris depuis une liste de ROMs
+
+```bash
+# 1. Marquer les favoris (crée gamelist.recalbox.xml si nécessaire)
+python3 recalbox_favorites.py ~/roms mark --by-rom favoris-roms.txt
+
+# 2. Tout effacer (supprime les .recalbox.xml)
+python3 recalbox_favorites.py ~/roms unmark
+```
+
+### Workflow v9 (legacy) : créer une liste de favoris manuellement
 
 ```bash
 # 1. Exporter en texte pour voir le format
-python3 recalbox_favorites.py ~/roms export-text exemple.txt
+python3 recalbox_favorites.py --v9 ~/roms export-text exemple.txt
 
 # 2. Éditer le fichier, ajouter/retirer des jeux
 
 # 3. Simuler d'abord
-python3 recalbox_favorites.py -n ~/roms mark ma-liste.txt
+python3 recalbox_favorites.py --v9 -n ~/roms mark ma-liste.txt
 
 # 4. Appliquer
-python3 recalbox_favorites.py ~/roms mark ma-liste.txt
-```
-
-### Workflow v10 : initialiser les favoris depuis une liste de ROMs
-
-```bash
-# 1. Créer les gamelist.recalbox.xml et marquer les favoris
-python3 recalbox_favorites.py --v10 ~/roms mark --by-rom favoris-roms.txt
-
-# 2. Tout effacer (supprime les .recalbox.xml)
-python3 recalbox_favorites.py --v10 ~/roms unmark
+python3 recalbox_favorites.py --v9 ~/roms mark ma-liste.txt
 ```
 
 ### Correspondance approximative (noms légèrement différents)
@@ -280,7 +276,7 @@ python3 recalbox_favorites.py --threshold 90 ~/roms mark favoris.txt
 roms/
 ├── megadrive/
 │   ├── gamelist.xml              ← v9
-│   ├── gamelist.recalbox.xml     ← v10 (créé par --v10 ou présent nativement)
+│   ├── gamelist.recalbox.xml     ← v10 (créé automatiquement ou présent nativement)
 │   ├── sonic.md
 │   └── streets_of_rage_2.md
 ├── mame/
