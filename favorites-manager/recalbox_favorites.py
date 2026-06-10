@@ -642,8 +642,11 @@ def apply_favorites(
     dirty_xml: set[Path] = set()
     # v10 : ini_path → set de rom_keys à marquer
     dirty_ini: dict[Path, set[str]] = {}
+    # v10 : cache des INI déjà lus (pour détection doublons sans double lecture)
+    ini_cache: dict[Path, dict[str, dict[str, str]]] = {}
 
     found_count = 0
+    already_count = 0
     not_found: list[tuple[str, str]] = []
 
     for entry in entries:
@@ -689,8 +692,19 @@ def apply_favorites(
             if force_v10:
                 path_field = get_field(game_el, "path")
                 ini = _userdata_path(xml_path)
-                dirty_ini.setdefault(ini, set()).add(_rom_key(path_field))
+                rk = _rom_key(path_field)
+                if ini not in ini_cache:
+                    ini_cache[ini] = _read_userdata(ini)
+                if ini_cache[ini].get(rk, {}).get("favorite", "").lower() == "true":
+                    logging.debug("Déjà favori (v10) : [%s] %s", xml_path.parent.name, name_query)
+                    already_count += 1
+                    continue
+                dirty_ini.setdefault(ini, set()).add(rk)
             else:
+                if _is_favorite(game_el):
+                    logging.debug("Déjà favori (v9) : [%s] %s", xml_path.parent.name, name_query)
+                    already_count += 1
+                    continue
                 set_field(game_el, "favorite", "1")
                 dirty_xml.add(xml_path)
             found_count += 1
@@ -718,8 +732,8 @@ def apply_favorites(
 
     dry_tag = "[DRY-RUN] " if dry_run else ""
     verb = "seraient appliqués" if dry_run else "appliqué(s)"
-    logging.info("%s%d favori(s) %s, %d non trouvé(s)", dry_tag, found_count, verb, len(not_found))
-    print(f"\n{'[DRY-RUN] ' if dry_run else '✔  '}{found_count} favori(s) {verb}, {len(not_found)} non trouvé(s)")
+    logging.info("%s%d favori(s) %s, %d déjà présent(s), %d non trouvé(s)", dry_tag, found_count, verb, already_count, len(not_found))
+    print(f"\n{'[DRY-RUN] ' if dry_run else '✔  '}{found_count} favori(s) {verb}, {already_count} déjà présent(s), {len(not_found)} non trouvé(s)")
     if not_found:
         print("Jeux non trouvés :")
         for sys_lbl, name in not_found:
