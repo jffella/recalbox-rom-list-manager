@@ -1,0 +1,20 @@
+[Super Nintendo]
+UWOL Quest For Money [PAL] (PortableDev - MojonTwins)
+
+[Commodore 64]
+Transe Sector Ultimate
+
+[Nintendo Entertainment System]
+Kubo 3
+Tiger Jenny (Ludosity)
+
+[Genesis]
+Papi commando Remix Deluxe (Studio Vetea)
+
+[Sega Master System]
+Papi Commando In CPP Land [recalbox]
+Digger Chan (Aypok)
+
+[Mame]
+Looping
+supertnk

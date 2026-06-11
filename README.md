@@ -121,7 +121,8 @@ Tetris
 ```
 
 Les en-têtes de section acceptent les noms longs (`[Sega Mega Drive]`), les alias
-(`[Genesis]`) et les noms de dossiers (`[megadrive]`).
+(`[Genesis]`) et les noms de dossiers (`[megadrive]`). La casse est ignorée.
+Voir [Annexe — Alias de systèmes acceptés](#annexe--alias-de-systèmes-acceptés) pour la liste complète.
 
 #### Option `--by-rom` — Correspondance sur le nom de fichier ROM
 
@@ -287,3 +288,79 @@ roms/
 | `recalbox_favorites.log` | Log complet de chaque exécution (DEBUG) |
 | `favoris.json` | Export JSON des favoris |
 | `favoris.txt` | Export texte des favoris, groupé par système |
+
+---
+
+## Annexe — Alias de systèmes acceptés
+
+Les en-têtes de section `[…]` dans les fichiers texte (`mark`, `export-text`) acceptent
+le nom de dossier, le nom long, et tous les alias listés ci-dessous. La casse est ignorée.
+
+| Système (dossier) | En-têtes acceptés |
+|---|---|
+| **Nintendo** | |
+| `nes` | `[nes]`, `[Nintendo NES]`, `[Famicom]`, `[Nintendo Entertainment System]` |
+| `fds` | `[fds]`, `[Famicom Disk System]` |
+| `snes` | `[snes]`, `[Super Nintendo]`, `[Super NES]`, `[Super Famicom]`, `[Super Nintendo Entertainment System]` |
+| `n64` | `[n64]`, `[Nintendo 64]`, `[Nintendo64]` |
+| `gb` | `[gb]`, `[Game Boy]`, `[Gameboy]` |
+| `gbc` | `[gbc]`, `[Game Boy Color]`, `[Gameboy Color]` |
+| `gba` | `[gba]`, `[Game Boy Advance]`, `[Gameboy Advance]` |
+| `nds` | `[nds]`, `[Nintendo DS]` |
+| `virtualboy` | `[virtualboy]`, `[Virtual Boy]` |
+| `pokemini` | `[pokemini]`, `[Pokemon Mini]` |
+| **Sega** | |
+| `mastersystem` | `[mastersystem]`, `[Sega Master System]`, `[SMS]`, `[Mark III]` |
+| `megadrive` | `[megadrive]`, `[Sega Mega Drive]`, `[Mega Drive]`, `[Genesis]`, `[Sega Genesis]` |
+| `segacd` | `[segacd]`, `[Sega CD]`, `[Mega CD]`, `[Mega-CD]` |
+| `sega32x` | `[sega32x]`, `[Sega 32X]` |
+| `saturn` | `[saturn]`, `[Sega Saturn]` |
+| `dreamcast` | `[dreamcast]`, `[Sega Dreamcast]` |
+| `gamegear` | `[gamegear]`, `[Sega Game Gear]` |
+| `sg1000` | `[sg1000]`, `[Sega SG-1000]` |
+| `naomi` | `[naomi]`, `[Sega NAOMI]` |
+| `atomiswave` | `[atomiswave]`, `[Atomiswave]` |
+| **Sony** | |
+| `psx` | `[psx]`, `[PlayStation]`, `[PS1]`, `[PSOne]`, `[Playstation 1]` |
+| `ps2` | `[ps2]`, `[PlayStation 2]` |
+| `psp` | `[psp]`, `[PlayStation Portable]` |
+| **NEC** | |
+| `pcengine` | `[pcengine]`, `[PC Engine]`, `[TurboGrafx]`, `[TurboGrafx-16]`, `[TG16]` |
+| `pcenginecd` | `[pcenginecd]`, `[PC Engine CD]`, `[Turbo CD]` |
+| `pc88` | `[pc88]`, `[NEC PC-88]` |
+| `pc98` | `[pc98]`, `[NEC PC-98]` |
+| **SNK** | |
+| `neogeo` | `[neogeo]`, `[Neo Geo]`, `[Neo-Geo]`, `[Neo Geo AES]`, `[Neo Geo MVS]` |
+| `neogeocd` | `[neogeocd]`, `[Neo Geo CD]` |
+| `ngp` | `[ngp]`, `[Neo Geo Pocket]` |
+| `ngpc` | `[ngpc]`, `[Neo Geo Pocket Color]` |
+| **Atari** | |
+| `atari2600` | `[atari2600]`, `[Atari 2600]`, `[Atari]` |
+| `atari5200` | `[atari5200]`, `[Atari 5200]` |
+| `atari7800` | `[atari7800]`, `[Atari 7800]` |
+| `atarist` | `[atarist]`, `[Atari ST]` |
+| `jaguar` | `[jaguar]`, `[Atari Jaguar]` |
+| `lynx` | `[lynx]`, `[Atari Lynx]` |
+| **Amstrad / Sinclair / Commodore** | |
+| `amstradcpc` | `[amstradcpc]`, `[Amstrad CPC]`, `[Amstrad]`, `[CPC]` |
+| `zxspectrum` | `[zxspectrum]`, `[ZX Spectrum]`, `[Spectrum]`, `[Sinclair Spectrum]` |
+| `c64` | `[c64]`, `[Commodore 64]`, `[Commodore64]` |
+| `amiga` | `[amiga]`, `[Amiga]`, `[Commodore Amiga]` |
+| `amigacd32` | `[amigacd32]`, `[Amiga CD32]` |
+| `vic20` | `[vic20]`, `[Commodore VIC-20]` |
+| **Arcade** | |
+| `mame` | `[mame]`, `[MAME]` |
+| `fba` | `[fba]`, `[FinalBurn Alpha]`, `[Finalburn Alpha]` |
+| `fbneo` | `[fbneo]`, `[FinalBurn Neo]`, `[Finalburn Neo]`, `[FB Neo]` |
+| **Ordinateurs / Divers** | |
+| `dos` | `[dos]`, `[DOS]`, `[MS-DOS]`, `[MSDOS]` |
+| `scummvm` | `[scummvm]`, `[ScummVM]`, `[Scumm]` |
+| `msx` | `[msx]`, `[MSX]` |
+| `msx2` | `[msx2]`, `[MSX2]`, `[MSX 2]` |
+| `x68000` | `[x68000]`, `[Sharp X68000]` |
+| `x1` | `[x1]`, `[Sharp X1]` |
+| `colecovision` | `[colecovision]`, `[ColecoVision]` |
+| `intellivision` | `[intellivision]`, `[Intellivision]` |
+| `vectrex` | `[vectrex]`, `[Vectrex]` |
+| `o2em` | `[o2em]`, `[Magnavox Odyssey 2]` |
+| `gw` | `[gw]`, `[Game & Watch]` |
